@@ -1,0 +1,17 @@
+---
+# defaults file for ansible-gitlab-config
+
+# Gitlab keys
+gitlab_api_url: "https://gitlab.com/api/v4"
+gitlab_token: "YOUR_GITLAB_TOKEN"
+
+# Variables each project
+gitlab_variables:
+  - project_name: "your-project-name"
+    # Project id on the gitlab
+    project_id: 1111111
+    envs:
+      - key: KEY_1_STAGE
+        value: "value1"
+      - key: KEY_1_MASTER
+        value: "value2"

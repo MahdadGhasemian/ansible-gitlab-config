@@ -1,0 +1,4 @@
+---
+# tasks file for ansible-gitlab-config
+
+- include_tasks: gitlab-variables.yml

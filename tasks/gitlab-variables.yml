@@ -1,0 +1,6 @@
+---
+- name: Add/Edit variables
+  loop: "{{ gitlab_variables }}"
+  loop_control:
+    loop_var: gitlab_variable
+  include_tasks: gitlab-variable.yml

@@ -1,0 +1,54 @@
+---
+- name: "Get current variables"
+  uri:
+    url: "{{ gitlab_api_url }}/projects/{{ gitlab_variable.project_id }}/variables/{{ gitlab_variable_env.key }}"
+    method: GET
+    headers:
+      PRIVATE-TOKEN: "{{ gitlab_token }}"
+    status_code: 200,404
+    validate_certs: "no"
+  register: gitlab_variables_request
+
+- name: Variable value
+  set_fact:
+    variable_value: "{{ gitlab_variables_request.json.value | default('') }}"
+
+- name: Edit variable
+  when: "variable_value is defined and variable_value != ''"
+  block:
+    - uri:
+        url: "{{ gitlab_api_url }}/projects/{{ gitlab_variable.project_id }}/variables/{{ gitlab_variable_env.key }}"
+        method: PUT
+        headers:
+          Content-Type: application/json
+          PRIVATE-TOKEN: "{{ gitlab_token }}"
+        status_code: 200
+        body_format: json
+        body:
+          key: "{{ gitlab_variable_env.key }}"
+          value: "{{ gitlab_variable_env.value }}"
+        validate_certs: "no"
+      changed_when: true
+      register: gitlab_update_varialbe
+    - debug:
+        msg: "Updated {{ gitlab_update_varialbe.json }}"
+
+- name: Add variable
+  when: "variable_value is not defined or variable_value == ''"
+  block:
+    - uri:
+        url: "{{ gitlab_api_url }}/projects/{{ gitlab_variable.project_id }}/variables"
+        method: POST
+        headers:
+          Content-Type: application/json
+          PRIVATE-TOKEN: "{{ gitlab_token }}"
+        status_code: 201
+        body_format: json
+        body:
+          key: "{{ gitlab_variable_env.key }}"
+          value: "{{ gitlab_variable_env.value }}"
+        validate_certs: "no"
+      changed_when: true
+      register: gitlab_add_varialbe
+    - debug:
+        msg: "Added {{ gitlab_add_varialbe.json }}"

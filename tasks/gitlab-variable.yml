@@ -1,0 +1,6 @@
+---
+- name: Variable
+  loop: "{{ gitlab_variable.envs }}"
+  loop_control:
+    loop_var: gitlab_variable_env
+  include_tasks: variable-config.yml
